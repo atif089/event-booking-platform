@@ -1,0 +1,6 @@
+# Health Check
+
+@host = http://localhost:3081
+
+
+GET {{host}}/health
