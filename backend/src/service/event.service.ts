@@ -1,4 +1,4 @@
-import { CreateEventData, EventRepository } from "../repository/event";
+import { CreateEventData, UpdateEventData, EventRepository } from "../repository/event";
 
 export const createEventService = (eventRepository: EventRepository) => ({
   async getAll() {
@@ -9,5 +9,11 @@ export const createEventService = (eventRepository: EventRepository) => ({
   },
   async create(data: CreateEventData) {
     return eventRepository.create(data);
+  },
+  async update(id: string, data: UpdateEventData) {
+    return eventRepository.update(id, data);
+  },
+  async delete(id: string) {
+    return eventRepository.delete(id);
   },
 });

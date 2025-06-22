@@ -102,4 +102,82 @@ router.post("/events", (req: Request, res: Response, next: NextFunction) => {
     .catch(next);
 });
 
+/**
+ * @openapi
+ * /events/{id}:
+ *   put:
+ *     tags:
+ *       - Events
+ *     summary: Update an existing event
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The event ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UpdateEventData'
+ *     responses:
+ *       200:
+ *         description: Event updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Event'
+ *       404:
+ *         description: Event not found
+ *       400:
+ *         description: Invalid input
+ */
+router.put("/events/:id", (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params;
+  eventService
+    .update(id, req.body)
+    .then((event) => {
+      if (!event) {
+        return res.status(404).json({ message: "Event not found" });
+      }
+      res.status(200).json(event);
+    })
+    .catch(next);
+});
+
+/**
+ * @openapi
+ * /events/{id}:
+ *   delete:
+ *     tags:
+ *       - Events
+ *     summary: Delete an event
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The event ID
+ *     responses:
+ *       204:
+ *         description: Event deleted successfully
+ *       404:
+ *         description: Event not found
+ */
+router.delete("/events/:id", (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params;
+  eventService
+    .delete(id)
+    .then((success) => {
+      if (!success) {
+        return res.status(404).json({ message: "Event not found" });
+      }
+      res.status(204).send();
+    })
+    .catch(next);
+});
+
 export default router;
