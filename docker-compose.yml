@@ -1,0 +1,21 @@
+version: "3.8"
+
+name: "event-booking-platform"
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: dockerfile
+    container_name: event-booking-platform-backend
+    ports:
+      - "3081:3081"
+    env_file:
+      - backend/.env
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./backend
+          ignore:
+            - node_modules
+          target: /app
