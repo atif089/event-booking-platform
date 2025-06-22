@@ -18,8 +18,12 @@ app.use("/", healthRouter); // /health route
 // Swagger UI
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.listen(SERVER_PORT, () => {
-  console.log(`🚀 Server started.
+if (!process.env.VITEST) {
+  app.listen(SERVER_PORT, () => {
+    console.log(`🚀 Server started.
 Health check at: http://localhost:${SERVER_PORT}/health
 API docs at: http://localhost:${SERVER_PORT}/api-docs`);
-});
+  });
+}
+
+export default app;
