@@ -1,4 +1,6 @@
 import { Router, Request, Response, NextFunction } from "express";
+
+
 import { KnexEventRepository } from "../repository/knex-event-repository";
 import { createEventService } from "../service/event.service";
 import { knexInstance } from "../drivers/db";
@@ -67,6 +69,36 @@ router.get("/events/:id", (req: Request, res: Response, next: NextFunction) => {
       }
       res.status(200).json(event);
     })
+    .catch(next);
+});
+
+/**
+ * @openapi
+ * /events:
+ *   post:
+ *     tags:
+ *       - Events
+ *     summary: Create a new event
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CreateEventData'
+ *     responses:
+ *       201:
+ *         description: Event created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Event'
+ *       400:
+ *         description: Invalid input
+ */
+router.post("/events", (req: Request, res: Response, next: NextFunction) => {
+  eventService
+    .create(req.body)
+    .then((event) => res.status(201).json(event))
     .catch(next);
 });
 

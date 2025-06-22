@@ -1,6 +1,7 @@
+import { randomUUID } from "crypto";
 import { Knex } from "knex";
 import { Event } from "../entities/event";
-import { EventRepository } from "./event";
+import { CreateEventData, EventRepository } from "./event";
 
 /**
  * Knex implementation of EventRepository.
@@ -39,6 +40,19 @@ export class KnexEventRepository implements EventRepository {
     const result = await this.knex(this.tableName).select(this.columns).where({ id }).first();
 
     return result ? this.mapRowToEvent(result) : null;
+  }
+
+  async create(data: CreateEventData): Promise<Event> {
+    const { pricePerPerson, ...rest } = data;
+    const [result] = await this.knex(this.tableName)
+      .insert({
+        id: randomUUID(),
+        ...rest,
+        price_per_person: pricePerPerson,
+      })
+      .returning(this.columns);
+
+    return this.mapRowToEvent(result);
   }
 
   private mapRowToEvent = (row: any): Event => {

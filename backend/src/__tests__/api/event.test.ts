@@ -3,15 +3,17 @@ import request from "supertest";
 import express from "express";
 import { Router, Request, Response, NextFunction } from "express";
 import { createEventService } from "../../service/event.service";
+import { CreateEventData } from "../../repository/event";
 
 // Create mock repository
 const mockEventRepository = {
   getAll: vi.fn(),
-  getById: vi.fn()
+  getById: vi.fn(),
+  create: vi.fn(),
 };
 
 // Mock the event service
-const eventService = createEventService(mockEventRepository);
+const eventService = createEventService(mockEventRepository as any);
 
 // Create router just like in events.ts but with mock dependencies
 const router = Router();
@@ -26,13 +28,21 @@ router.get("/events", (req: Request, res: Response, next: NextFunction) => {
 
 router.get("/events/:id", (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
-  eventService.getById(id)
-    .then(event => {
+  eventService
+    .getById(id)
+    .then((event) => {
       if (!event) {
         return res.status(404).json({ message: "Event not found" });
       }
       res.status(200).json(event);
     })
+    .catch(next);
+});
+
+router.post("/events", (req: Request, res: Response, next: NextFunction) => {
+  eventService
+    .create(req.body)
+    .then((event) => res.status(201).json(event))
     .catch(next);
 });
 
@@ -55,23 +65,23 @@ describe("Events API", () => {
           title: "Test Event 1",
           date: "2025-07-01T12:00:00Z",
           location: "Test Location 1",
-          active: true
+          active: true,
         },
         {
           id: "2",
           title: "Test Event 2",
           date: "2025-07-02T12:00:00Z",
           location: "Test Location 2",
-          active: true
-        }
+          active: true,
+        },
       ];
-      
+
       // Setup mock
       mockEventRepository.getAll.mockResolvedValue(mockEvents);
 
       // Make request
       const response = await request(app).get("/events");
-      
+
       // Assert response
       expect(response.status).toBe(200);
       expect(Array.isArray(response.body)).toBe(true);
@@ -80,7 +90,7 @@ describe("Events API", () => {
       expect(response.body[0]).toHaveProperty("title");
       expect(response.body[0]).toHaveProperty("date");
       expect(response.body[0]).toHaveProperty("location");
-      
+
       // Assert mock was called
       expect(mockEventRepository.getAll).toHaveBeenCalled();
     });
@@ -89,10 +99,10 @@ describe("Events API", () => {
       // Setup mock to throw error
       const errorMessage = "Database error";
       mockEventRepository.getAll.mockRejectedValue(new Error(errorMessage));
-      
+
       // Make request
       const response = await request(app).get("/events");
-      
+
       // Express default error handler returns 500
       expect(response.status).toBe(500);
     });
@@ -106,13 +116,13 @@ describe("Events API", () => {
         date: "2025-07-01T12:00:00Z",
         location: "Test Location",
         description: "Test Description",
-        active: true
+        active: true,
       };
 
       mockEventRepository.getById.mockResolvedValue(mockEvent);
 
       const response = await request(app).get("/events/123");
-      
+
       expect(response.status).toBe(200);
       expect(response.body).toEqual(mockEvent);
       expect(mockEventRepository.getById).toHaveBeenCalledWith("123");
@@ -122,7 +132,7 @@ describe("Events API", () => {
       mockEventRepository.getById.mockResolvedValue(null);
 
       const response = await request(app).get("/events/999");
-      
+
       expect(response.status).toBe(404);
       expect(response.body).toEqual({ message: "Event not found" });
       expect(mockEventRepository.getById).toHaveBeenCalledWith("999");
@@ -133,8 +143,54 @@ describe("Events API", () => {
       mockEventRepository.getById.mockRejectedValue(new Error(errorMessage));
 
       const response = await request(app).get("/events/123");
-      
+
       // Express default error handler returns 500
+      expect(response.status).toBe(500);
+    });
+  });
+
+  describe("POST /events", () => {
+    it("should return 201 and the created event", async () => {
+      const eventData: CreateEventData = {
+        title: "New Year Party",
+        description: "A party to celebrate the new year.",
+        date: "2025-01-01T00:00:00Z",
+        location: "Times Square",
+        capacity: 1000,
+        pricePerPerson: 50,
+      };
+
+      const createdEvent = {
+        ...eventData,
+        id: "xyz-123",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        active: true,
+      };
+
+      mockEventRepository.create.mockResolvedValue(createdEvent);
+
+      const response = await request(app).post("/events").send(eventData);
+
+      expect(response.status).toBe(201);
+      expect(response.body).toEqual(createdEvent);
+      expect(mockEventRepository.create).toHaveBeenCalledWith(eventData);
+    });
+
+    it("should return 500 on creation error", async () => {
+      const eventData: CreateEventData = {
+        title: "New Year Party",
+        description: "A party to celebrate the new year.",
+        date: "2025-01-01T00:00:00Z",
+        location: "Times Square",
+        capacity: 1000,
+        pricePerPerson: 50,
+      };
+      const errorMessage = "Database insertion failed";
+      mockEventRepository.create.mockRejectedValue(new Error(errorMessage));
+
+      const response = await request(app).post("/events").send(eventData);
+
       expect(response.status).toBe(500);
     });
   });

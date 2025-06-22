@@ -10,6 +10,8 @@ const queryBuilder = {
   where: vi.fn().mockReturnThis(),
   orderBy: vi.fn().mockReturnThis(),
   first: vi.fn().mockReturnThis(),
+  insert: vi.fn().mockReturnThis(),
+  returning: vi.fn().mockReturnThis(),
 };
 
 // Mock the knex instance that returns our query builder
@@ -82,6 +84,36 @@ describe("KnexEventRepository", () => {
       expect(queryBuilder.where).toHaveBeenCalledWith({ id: "999" });
       expect(queryBuilder.first).toHaveBeenCalled();
       expect(event).toBeNull();
+    });
+  });
+
+  describe("create", () => {
+    it("should create an event and return it", async () => {
+      const eventData = {
+        title: "New Event",
+        description: "A cool event",
+        date: new Date().toISOString(),
+        location: "Someplace",
+        capacity: 100,
+        pricePerPerson: 25,
+      };
+      const createdEvent = { ...eventData, id: "gen-id-123" };
+
+      // Setup mock
+      queryBuilder.returning.mockResolvedValueOnce([createdEvent]);
+
+      const result = await repo.create(eventData);
+
+      const { pricePerPerson, ...restOfEventData } = eventData;
+
+      expect(mockKnex).toHaveBeenCalledWith("events");
+      expect(queryBuilder.insert).toHaveBeenCalledWith(expect.objectContaining({
+        id: expect.any(String),
+        ...restOfEventData,
+        price_per_person: pricePerPerson,
+      }));
+      expect(queryBuilder.returning).toHaveBeenCalled();
+      expect(result).toEqual(createdEvent);
     });
   });
 });
