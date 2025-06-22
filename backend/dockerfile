@@ -9,9 +9,14 @@ RUN npm install
 COPY . .
 
 ENV NODE_ENV=development
+
+RUN chmod +x /app/entrypoint.sh
+
 ENV SERVER_PORT=3081
 
 EXPOSE $SERVER_PORT
+
+ENTRYPOINT ["/app/entrypoint.sh"]
 
 # TODO: This changes for production
 CMD ["npm", "run", "dev"]
