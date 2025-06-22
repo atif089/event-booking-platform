@@ -1,0 +1,31 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_CONNECTION_STRING")
+}
+
+// We will not use prisma client
+// generator client {
+//   provider = "prisma-client"
+//   output   = "../src/generated/prisma"
+// }
+
+model Event {
+  id             String   @id @default(cuid())
+  title          String
+  description    String
+  date           DateTime
+  location       String
+  capacity       Int?     @default(0)
+  pricePerPerson Float?   @default(0) @map("price_per_person")
+  latitude       Float?
+  longitude      Float?
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @default(now()) @map("updated_at")
+
+  @@index([title, active])
+  @@index([date, active])
+  @@index([pricePerPerson, active])
+  @@index([createdAt])
+  @@map("events")
+}
