@@ -5,4 +5,5 @@ import { Event } from "../entities/event";
  */
 export interface EventRepository {
   getAll(): Promise<Event[]>;
+  getById(id: string): Promise<Event | null>;
 }

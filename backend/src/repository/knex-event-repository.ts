@@ -1,0 +1,63 @@
+import { Knex } from "knex";
+import { Event } from "../entities/event";
+import { EventRepository } from "./event";
+
+/**
+ * Knex implementation of EventRepository.
+ */
+export class KnexEventRepository implements EventRepository {
+  private readonly knex: Knex;
+  private readonly tableName = "events";
+
+  // Define columns once to avoid duplication
+  private readonly columns = [
+    "id",
+    "title",
+    "description",
+    "date",
+    "location",
+    "capacity",
+    "price_per_person as pricePerPerson",
+    "latitude",
+    "longitude",
+    "active",
+    "created_at as createdAt",
+    "updated_at as updatedAt",
+  ];
+
+  constructor(knex: Knex) {
+    this.knex = knex;
+  }
+
+  async getAll(): Promise<Event[]> {
+    const results = await this.knex(this.tableName).select(this.columns).where({ active: true }).orderBy("date", "asc");
+
+    return results.map(this.mapRowToEvent);
+  }
+
+  async getById(id: string): Promise<Event | null> {
+    const result = await this.knex(this.tableName).select(this.columns).where({ id }).first();
+
+    return result ? this.mapRowToEvent(result) : null;
+  }
+
+  private mapRowToEvent = (row: any): Event => {
+    // Helper function to format dates consistently
+    const formatDate = (date: Date | string) => (date instanceof Date ? date.toISOString() : date);
+
+    return {
+      id: row.id,
+      title: row.title,
+      date: formatDate(row.date),
+      location: row.location,
+      description: row.description,
+      capacity: row.capacity,
+      pricePerPerson: row.pricePerPerson,
+      latitude: row.latitude,
+      longitude: row.longitude,
+      active: row.active,
+      createdAt: formatDate(row.createdAt),
+      updatedAt: formatDate(row.updatedAt),
+    };
+  };
+}
