@@ -1,6 +1,6 @@
-const dotenv = require("dotenv");
-const { faker } = require("@faker-js/faker");
-const { Pool } = require("pg");
+import dotenv from "dotenv";
+import { faker } from "@faker-js/faker";
+import { Pool } from "pg";
 
 dotenv.config();
 
