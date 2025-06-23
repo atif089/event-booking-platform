@@ -2,12 +2,15 @@ import "./App.css";
 import EventList from "./components/EventList";
 import { EVENTS_ENDPOINT } from "./config/api";
 import { useEventStore } from "./store/eventStore";
+import EventEditor from "./components/EventEditor";
+import { Toaster } from "react-hot-toast";
 
 function App() {
-  const { mode, eventId, startCreating } = useEventStore();
+  const { mode, startCreating } = useEventStore();
 
   return (
     <div className="min-h-screen bg-gray-100">
+      <Toaster />
       <div className="flex max-w-6xl mx-auto">
         <div className="w-1/3">
           <div className="flex justify-between items-center mb-4 p-4">
@@ -23,11 +26,12 @@ function App() {
         </div>
         <div className="w-2/3 flex items-center justify-center">
           {mode === "idle" ? (
-            <h2 className="text-3xl font-bold mb-4">Select an event to edit or create a new one</h2>
-          ) : mode === "creating" ? (
-            <h2 className="text-3xl font-bold mb-4">Editor component will show here for creating a new event</h2>
+            <div className="text-center">
+              <h2 className="text-3xl font-bold mb-4">Welcome!</h2>
+              <p className="text-lg text-gray-600">Select an event to edit or create a new one.</p>
+            </div>
           ) : (
-            <h2 className="text-3xl font-bold mb-4">Editor component will show here for event {eventId}</h2>
+            <EventEditor />
           )}
         </div>
       </div>

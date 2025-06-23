@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import type { Event } from "../components/Event";
+import { useEventStore } from "../store/eventStore";
 
 export const useFetchEvents = ({ endpoint }: { endpoint: string }) => {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const { refreshKey } = useEventStore();
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -28,7 +30,7 @@ export const useFetchEvents = ({ endpoint }: { endpoint: string }) => {
     };
 
     fetchEvents();
-  }, [endpoint]);
+  }, [endpoint, refreshKey]);
 
   return { events, loading, error };
 };
