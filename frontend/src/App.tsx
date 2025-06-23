@@ -4,6 +4,7 @@ import { EVENTS_ENDPOINT } from "./config/api";
 import { useEventStore } from "./store/eventStore";
 import EventEditor from "./components/EventEditor";
 import { Toaster } from "react-hot-toast";
+import SearchBox from "./components/SearchBox";
 
 function App() {
   const { mode, startCreating } = useEventStore();
@@ -21,6 +22,9 @@ function App() {
             >
               Create New Event
             </button>
+          </div>
+          <div className="p-4">
+            <SearchBox />
           </div>
           <EventList title="Events List" fetchEndpoint={EVENTS_ENDPOINT} />
         </div>
