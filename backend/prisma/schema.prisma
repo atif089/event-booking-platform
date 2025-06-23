@@ -10,22 +10,53 @@ datasource db {
 // }
 
 model Event {
-  id             String   @id @default(cuid())
+  id             String           @id @default(cuid())
   title          String
   description    String
   date           DateTime
   location       String
-  capacity       Int?     @default(0)
-  pricePerPerson Float?   @default(0) @map("price_per_person")
+  capacity       Int?             @default(0)
+  pricePerPerson Float?           @default(0) @map("price_per_person")
   latitude       Float?
   longitude      Float?
-  active         Boolean  @default(true)
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @default(now()) @map("updated_at")
+  active         Boolean          @default(true)
+  createdAt      DateTime         @default(now()) @map("created_at")
+  updatedAt      DateTime         @default(now()) @map("updated_at")
+  EventOccupancy EventOccupancy[]
+  EventBooking   EventBooking[]
 
   @@index([title, active])
   @@index([date, active])
   @@index([pricePerPerson, active])
   @@index([createdAt])
   @@map("events")
+}
+
+// Add a booking model
+// data model should be something like event_id, customer_email, num_attendees, booking_date, and it needs to have a relation to the class.
+// simple booking form on the event detail page
+// Eddie Hudson
+// 11:20
+// we need to get the capacity remaining after a booking is reserved, and display that on the event listing
+// ex: if 1 class is booked and the capacity is 10, it goes down to 9
+
+model EventOccupancy {
+  id                  String @id @default(cuid())
+  event               Event  @relation(fields: [event_id], references: [id])
+  event_id            String
+  original_capacity   Int
+  remaining_occupancy Int
+
+  @@map("event_occupancy")
+}
+
+model EventBooking {
+  id             String   @id @default(cuid())
+  event          Event    @relation(fields: [event_id], references: [id])
+  event_id       String
+  customer_email String
+  num_attendees  Int
+  booking_date   DateTime
+
+  @@map("event_booking")
 }
