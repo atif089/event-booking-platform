@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./swagger";
+import corsMiddleware from "./middleware/cors";
 
 // Routers
 import healthRouter from "./api/health";
@@ -14,6 +15,9 @@ const SERVER_PORT = process.env.SERVER_PORT || 3000;
 const app = express();
 
 app.use(express.json());
+
+// cors
+app.use(corsMiddleware);
 
 // Routes
 app.use("/", healthRouter); // /health route
