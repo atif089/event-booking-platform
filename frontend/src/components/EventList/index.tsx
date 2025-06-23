@@ -1,5 +1,6 @@
 import { useFetchEvents } from "../../hooks/useFetchEvents";
 import EventCard from "../Event";
+import { useEventStore } from "../../store/eventStore";
 
 const EventList = ({ fetchEndpoint, title }: { fetchEndpoint: string; title: string }) => {
   if (fetchEndpoint === undefined) {
@@ -7,6 +8,7 @@ const EventList = ({ fetchEndpoint, title }: { fetchEndpoint: string; title: str
   }
 
   const { events, loading, error } = useFetchEvents({ endpoint: fetchEndpoint });
+  const { startEditing } = useEventStore();
 
   if (loading) {
     return <div className="container mx-auto p-4 text-center">Loading events...</div>;
@@ -21,7 +23,7 @@ const EventList = ({ fetchEndpoint, title }: { fetchEndpoint: string; title: str
       <h1 className="text-3xl font-bold mb-4">{title}</h1>
       <div className="grid grid-cols-1 gap-4 overflow-y-scroll h-[calc(100vh-100px)] pr-4">
         {events.map((event) => (
-          <EventCard key={event.id} event={event} />
+          <EventCard key={event.id} event={event} onClick={() => startEditing(event.id.toString())} />
         ))}
       </div>
     </div>

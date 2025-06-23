@@ -11,10 +11,11 @@ export interface Event {
 
 interface EventCardProps {
   event: Event;
+  onClick: () => void;
 }
 
-const EventCard = ({ event }: EventCardProps) => (
-  <div key={event.id} className="border rounded-lg p-4 shadow-lg bg-white">
+const EventCard = ({ event, onClick }: EventCardProps) => (
+  <div onClick={onClick} className="border rounded-lg p-4 shadow-lg bg-white cursor-pointer">
     <div className="text-gray-600">
       <StatusChip enabled={event.active} />
     </div>
