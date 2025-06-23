@@ -1,8 +1,8 @@
 import { Router, Request, Response, NextFunction } from "express";
 
-
 import { KnexEventRepository } from "../repository/knex-event-repository";
 import { createEventService } from "../service/event.service";
+import { createNaturalLanguageQueryService } from "../service/llm.service";
 import { knexInstance } from "../drivers/db";
 
 const router: Router = Router();
@@ -10,6 +10,7 @@ const router: Router = Router();
 // Instantiate the repository and service with their dependencies
 const eventRepository = new KnexEventRepository(knexInstance);
 const eventService = createEventService(eventRepository);
+const llmService = createNaturalLanguageQueryService(process.env.OPENAI_API_KEY as string);
 
 /**
  * @openapi
@@ -32,6 +33,63 @@ router.get("/events", (req: Request, res: Response, next: NextFunction) => {
   eventService
     .getAll()
     .then((events) => res.status(200).json(events))
+    .catch(next);
+});
+
+/**
+ * @openapi
+ * /search:
+ *   get:
+ *     tags:
+ *       - Events
+ *     summary: Search for events using a natural language query
+ *     parameters:
+ *       - in: query
+ *         name: q
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The natural language query to search for events
+ *     responses:
+ *       200:
+ *         description: A list of events that match the search query
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Event'
+ *       400:
+ *         description: Invalid input, query parameter is required
+ *       500:
+ *         description: Internal server error
+ */
+// @ts-ignore
+router.get("/events/search", (req: Request, res: Response, next: NextFunction) => {
+  const { q } = req.query;
+
+  if (!q || typeof q !== "string") {
+    return res.status(400).json({ message: "Query parameter 'q' is required and must be a string." });
+  }
+
+  console.log("Query received:", q);
+
+  llmService
+    .getQueryFromInput(q)
+    .then((queryParts) => {
+      console.log("Query parts:", queryParts);
+      if (queryParts.sql_parameters && queryParts.sql_parameters.length > 0) {
+        console.log("Running search with parameters");
+        return eventService.search(queryParts.sql_clause, queryParts.sql_parameters);
+      } else {
+        console.log("Running search without parameters");
+        return eventService.search(queryParts.sql_clause);
+      }
+    })
+    .then((events) => {
+      console.log("Events found:", events);
+      res.status(200).json(events);
+    })
     .catch(next);
 });
 
