@@ -50,8 +50,8 @@ describe("EventList", () => {
       },
     ];
     vi.mocked(useFetchEvents).mockReturnValue({ events: mockEvents, loading: false, error: null });
-    render(<EventList fetchEndpoint="/api/events" />);
-    expect(screen.getByText("Upcoming Events")).toBeInTheDocument();
+    render(<EventList fetchEndpoint="/api/events" title="Events List" />);
+    expect(screen.getByText("Events List")).toBeInTheDocument();
     expect(screen.getByText("Event 1")).toBeInTheDocument();
     expect(screen.getByText("Event 2")).toBeInTheDocument();
   });

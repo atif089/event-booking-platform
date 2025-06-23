@@ -1,7 +1,7 @@
 import { useFetchEvents } from "../../hooks/useFetchEvents";
 import EventCard from "../Event";
 
-const EventList = ({ fetchEndpoint }: { fetchEndpoint: string }) => {
+const EventList = ({ fetchEndpoint, title }: { fetchEndpoint: string; title: string }) => {
   if (fetchEndpoint === undefined) {
     throw new Error("EventList: fetchEndpoint prop is required");
   }
@@ -18,7 +18,7 @@ const EventList = ({ fetchEndpoint }: { fetchEndpoint: string }) => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4">Events List</h1>
+      <h1 className="text-3xl font-bold mb-4">{title}</h1>
       <div className="grid grid-cols-1 gap-4 overflow-y-scroll h-[calc(100vh-100px)] pr-4">
         {events.map((event) => (
           <EventCard key={event.id} event={event} />
