@@ -1,8 +1,8 @@
 import { useFetchEvents } from "../../hooks/useFetchEvents";
 import EventCard from "../Event";
 
-const EventList = () => {
-  const { events, loading, error } = useFetchEvents();
+const EventList = ({ fetchEndpoint }: { fetchEndpoint: string }) => {
+  const { events, loading, error } = useFetchEvents({ endpoint: fetchEndpoint });
 
   if (loading) {
     return <div className="container mx-auto p-4 text-center">Loading events...</div>;

@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import type { Event } from "../components/Event";
-import { EVENTS_ENDPOINT } from "../config/api";
 
-export const useFetchEvents = () => {
+export const useFetchEvents = ({ endpoint }: { endpoint: string }) => {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -10,7 +9,7 @@ export const useFetchEvents = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch(EVENTS_ENDPOINT);
+        const response = await fetch(endpoint);
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -29,7 +28,7 @@ export const useFetchEvents = () => {
     };
 
     fetchEvents();
-  }, []);
+  }, [endpoint]);
 
   return { events, loading, error };
 };
