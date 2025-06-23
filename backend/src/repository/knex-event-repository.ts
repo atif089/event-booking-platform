@@ -31,7 +31,7 @@ export class KnexEventRepository implements EventRepository {
   }
 
   async getAll(): Promise<Event[]> {
-    const results = await this.knex(this.tableName).select(this.columns).where({ active: true }).orderBy("date", "asc");
+    const results = await this.knex(this.tableName).select(this.columns).orderBy("date", "asc");
 
     return results.map(this.mapRowToEvent);
   }
