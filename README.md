@@ -6,7 +6,11 @@ To get started with this project, you will need to have Docker and Node.js insta
 
 ### Backend Setup
 
+Install docker and docker compose.
+
 ### Frontend Setup
+
+Run `npm install` in the `frontend` directory.
 
 ## Running the Application
 
@@ -15,6 +19,20 @@ From the root directory, start the services using Docker Compose:
 ```sh
 docker-compose up -d --build
 ```
+
+For live backend reloading development:
+
+```sh
+docker-compose up --build --watch
+```
+
+For frontend:
+
+```sh
+npm run dev
+```
+
+**Reminder**: We need to have the backend running for the frontend to work.
 
 ## Database Seeding
 
