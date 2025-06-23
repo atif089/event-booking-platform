@@ -3,4 +3,12 @@
 @host = http://localhost:3081
 
 
-GET {{host}}/health
+POST {{host}}/event-bookings
+Content-Type: application/json
+
+{
+  "event_id": "01JYBNDCSEA35FRYAH63AC1DTB",
+  "customer_email": "aaa@example.com",
+  "num_attendees": 5,
+  "booking_date": "2025-06-23"
+}

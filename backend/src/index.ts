@@ -7,6 +7,7 @@ import corsMiddleware from "./middleware/cors";
 // Routers
 import healthRouter from "./api/health";
 import eventsRouter from "./api/events";
+import eventBookingRouter from "./api/eventBooking";
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.use(corsMiddleware);
 // Routes
 app.use("/", healthRouter); // /health route
 app.use("/", eventsRouter); // /events route
+app.use("/", eventBookingRouter); // /events route
 
 // Swagger UI
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
