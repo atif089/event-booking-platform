@@ -8,7 +8,8 @@ export DATABASE_CONNECTION_STRING="postgresql://${POSTGRES_USER}:${POSTGRES_PASS
 
 if [ "$NODE_ENV" = "development" ]; then
     # persist DATABASE_CONNECTION_STRING by appending to .env file
-    echo "\nDATABASE_CONNECTION_STRING=${DATABASE_CONNECTION_STRING}" >> .env
+    echo "" >> .env
+    echo "DATABASE_CONNECTION_STRING=${DATABASE_CONNECTION_STRING}" >> .env
     # Run database migrations
     npx prisma migrate deploy
 fi
