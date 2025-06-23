@@ -17,4 +17,5 @@ export interface EventRepository {
   create(data: CreateEventData): Promise<Event>;
   update(id: string, data: UpdateEventData): Promise<Event | null>;
   delete(id: string): Promise<boolean>;
+  search(rawWhereQuery: string, params?: any[]): Promise<Event[]>;
 }

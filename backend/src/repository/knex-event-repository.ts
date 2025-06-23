@@ -75,6 +75,22 @@ export class KnexEventRepository implements EventRepository {
     return result > 0;
   }
 
+  /**
+   * Search for events using a raw SQL WHERE clause.
+   * @param rawWhereQuery - Raw SQL WHERE clause (without the 'WHERE' keyword)
+   * @param params - Optional array of parameters to safely bind to the query
+   * @returns Promise resolving to an array of matching events
+   */
+  async search(rawWhereQuery: string, params: any[] = []): Promise<Event[]> {
+    // Using knex.raw to inject raw SQL into the WHERE clause
+    const results = await this.knex(this.tableName)
+      .select(this.columns)
+      .whereRaw(rawWhereQuery, params)
+      .orderBy('date', 'asc');
+
+    return results.map(this.mapRowToEvent);
+  }
+
   private mapRowToEvent = (row: any): Event => {
     // Helper function to format dates consistently
     const formatDate = (date: Date | string) => (date instanceof Date ? date.toISOString() : date);

@@ -16,4 +16,13 @@ export const createEventService = (eventRepository: EventRepository) => ({
   async delete(id: string) {
     return eventRepository.delete(id);
   },
+  /**
+   * Search for events using a raw SQL WHERE clause
+   * @param rawWhereQuery - SQL WHERE clause (without the 'WHERE' keyword)
+   * @param params - Optional parameters to bind to the query for SQL injection protection
+   * @returns Promise resolving to an array of matching events
+   */
+  async search(rawWhereQuery: string, params?: any[]) {
+    return eventRepository.search(rawWhereQuery, params);
+  },
 });
