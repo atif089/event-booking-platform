@@ -2,6 +2,10 @@ import { useFetchEvents } from "../../hooks/useFetchEvents";
 import EventCard from "../Event";
 
 const EventList = ({ fetchEndpoint }: { fetchEndpoint: string }) => {
+  if (fetchEndpoint === undefined) {
+    throw new Error("EventList: fetchEndpoint prop is required");
+  }
+
   const { events, loading, error } = useFetchEvents({ endpoint: fetchEndpoint });
 
   if (loading) {
