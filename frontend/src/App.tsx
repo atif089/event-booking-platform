@@ -1,13 +1,11 @@
 import "./App.css";
+import EventList from "./components/EventList";
 
 function App() {
   return (
-    <>
-      <div className="flex min-h-screen">
-        <p className="text-3xl">Hello World</p>
-        <p className="text-2xl text-red-500">Hello World</p>
-      </div>
-    </>
+    <div className="min-h-screen bg-gray-100">
+      <EventList />
+    </div>
   );
 }
 
