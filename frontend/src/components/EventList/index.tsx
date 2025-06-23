@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
 
+import StatusChip from "../StatusChip";
+
 // Define the Event interface here
 export interface Event {
   id: number;
-  name: string;
+  title: string;
   date: string;
   location: string;
   description: string;
+  active: boolean;
 }
 
 const EventList = () => {
@@ -52,10 +55,15 @@ const EventList = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {events.map((event) => (
           <div key={event.id} className="border rounded-lg p-4 shadow-lg bg-white">
-            <h2 className="text-2xl font-semibold">{event.name}</h2>
-            <p className="text-gray-600">{new Date(event.date).toLocaleDateString()}</p>
-            <p className="text-gray-500">{event.location}</p>
-            <p className="mt-2">{event.description}</p>
+            <div className="text-gray-600">
+              <StatusChip enabled={event.active} />
+            </div>
+            <h2 className="text-xl font-semibold my-4">{event.title}</h2>
+            <div className="flex justify-between">
+              <p className="text-sm text-gray-600">{new Date(event.date).toLocaleDateString()}</p>
+              <p className="text-sm text-gray-500">{event.location}</p>
+            </div>
+            <p className="mt-2 " dangerouslySetInnerHTML={{ __html: event.description }}></p>
           </div>
         ))}
       </div>
