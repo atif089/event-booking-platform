@@ -17,10 +17,10 @@ export const createNaturalLanguageQueryService = (OPENAI_API_KEY: string) => ({
         Examples:
     
         - Finding active events: { "sql_clause": "active = true", "sql_parameters": []}
-        - Events related to Tennis: { "sql_clause": "title LIKE ? OR description LIKE ?", "sql_parameters": ["%Tennis%", "%Tennis%"]} 
+        - Events related to Tennis: { "sql_clause": "title ILIKE ? OR description ILIKE ?", "sql_parameters": ["%Tennis%", "%Tennis%"]} 
         - Events after Jan 2023 with capacity more than 25: { "sql_clause": "date > ? AND capacity >= ?", "sql_parameters": ["2023-01-01", 25]}
         - Events with price under $100: { "sql_clause": "price_per_person < ?", "sql_parameters": [100]}
-        - Women only events: { "sql_clause": "description LIKE ?", "sql_parameters": ["%women only%"]} 
+        - Women only events: { "sql_clause": "description ILIKE ?", "sql_parameters": ["%women only%"]} 
     
           The user's input will be the string as showin in example and your and your response will be in the format
     

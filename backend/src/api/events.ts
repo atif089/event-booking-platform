@@ -38,7 +38,7 @@ router.get("/events", (req: Request, res: Response, next: NextFunction) => {
 
 /**
  * @openapi
- * /search:
+ * /events/search:
  *   get:
  *     tags:
  *       - Events

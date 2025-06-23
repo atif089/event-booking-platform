@@ -82,11 +82,13 @@ export class KnexEventRepository implements EventRepository {
    * @returns Promise resolving to an array of matching events
    */
   async search(rawWhereQuery: string, params: any[] = []): Promise<Event[]> {
+    console.log("searching");
+    console.log(rawWhereQuery, params);
     // Using knex.raw to inject raw SQL into the WHERE clause
     const results = await this.knex(this.tableName)
       .select(this.columns)
       .whereRaw(rawWhereQuery, params)
-      .orderBy('date', 'asc');
+      .orderBy("date", "asc");
 
     return results.map(this.mapRowToEvent);
   }
